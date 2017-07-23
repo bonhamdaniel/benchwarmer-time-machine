@@ -25,7 +25,7 @@ SECRET_KEY = 'wad@jr=v5-361!n!&fylw^w5@s_yyitx)e(^$0zm)z$i5i43v6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['thebenchwarmer.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
