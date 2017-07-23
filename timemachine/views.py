@@ -6,11 +6,11 @@ from django_tables2 import RequestConfig
 from django.apps import apps
 from .tables import ConvertedPTable, convertPData, ConvertedGTable, convertGData, convertCData, convertCarData
 
-from .models import Skaterseasons, Convertedsseasons, Goalieseasons, Season, Team, Player
+from .models import Skaterseasons, Goalieseasons, Season, Player
 
 # Create your views here.
 class IndexView(generic.ListView):
-	model = Team
+	model = Player
 	template_name = 'timemachine/index.html'
 
 def  goaliestats(request):
