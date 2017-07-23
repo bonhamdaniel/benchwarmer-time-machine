@@ -1,0 +1,30 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+<h2>Player Stats</h2>
+<form action="{% url 'timemachine:teamstats' %}" method="get">
+	{% csrf_token %}
+	<label>Convert:</label>
+	<select name="baseSeason" id="234">
+	{% for s1 in season1 %}
+		<option id="{{ s1.seasonid }}" 
+		        value="{{ s1.seasonid }}"
+		        {% if s1 == base %}selected="selected"{% endif %}>
+		        {{ s1.seasonid }}
+		</option>
+	{% endfor %}
+	</select>
+	<label>to</label>
+	<select name="targetSeason">
+	{% for s2 in season2 %}
+		<option id="{{ s2.seasonid }}" 
+				value="{{ s2.seasonid }}"
+		        {% if s2 == target %}selected="selected"{% endif %}>
+				{{ s2.seasonid }}
+		</option>
+	{% endfor %}
+	</select>
+	<input type="submit" value="Convert"/>
+	<div>
+		{% render_table table %}
+	</div>
+</form>

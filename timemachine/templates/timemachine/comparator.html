@@ -1,0 +1,49 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'timemachine/style.css' %}" />
+<div id="statOptions">
+	<form action="{% url 'timemachine:comparator' %}" method="get">
+		{% csrf_token %}
+		<label>Base Season:</label>
+		<select name="baseSeason">
+		{% for s1 in season1 %}
+			<option id="{{ s1.seasonid }}" 
+			        value="{{ s1.seasonid }}"
+			        {% if s1 == base %}selected="selected"{% endif %}>
+			        {{ s1.seasonid }}
+			</option>
+		{% endfor %}
+		</select>
+		<label>Player #1:</label>
+		<select name="player1">
+		{% for p1 in players1 %}
+			<option id="{{ p1.playerid }}" 
+			        value="{{ p1.playerid }}"
+			        {% if p1 == player1 %}selected="selected"{% endif %}>
+			        {{ p1.playername }}
+			</option>
+		{% endfor %}
+		</select>
+		<label>Player #2:</label>
+		<select name="player2">
+		{% for p2 in players2 %}
+			<option id="{{ p2.playerid }}" 
+			        value="{{ p2.playerid }}"
+			        {% if p2 == player2 %}selected="selected"{% endif %}>
+			        {{ p2.playername }}
+			</option>
+		{% endfor %}
+		</select>
+		<input type="submit" value="Compare"/>
+		<input type="checkbox" name="seasons">Display individual seasons
+	</form>
+</div>
+<div class="stattable">
+	{% render_table table %}
+</div>
+<footer>
+	<div>
+		<address><a href="mailto:bonhamdaniel@gmail.com">contact@benchwarmer.com</a></address>
+		<p>&copy2017 DCDesign</p>
+	</div>
+</footer>

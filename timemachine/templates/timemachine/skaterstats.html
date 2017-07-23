@@ -1,0 +1,39 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'timemachine/style.css' %}" />
+<div id="statOptions">
+	<form action="{% url 'timemachine:skaterstats' %}" method="get">
+		{% csrf_token %}
+		<label>Convert:</label>
+		<select name="baseSeason">
+		{% for s1 in season1 %}
+			<option id="{{ s1.seasonid }}" 
+			        value="{{ s1.seasonid }}"
+			        {% if s1 == base %}selected="selected"{% endif %}>
+			        {{ s1.seasonid }}
+			</option>
+		{% endfor %}
+		</select>
+		<label>to</label>
+		<select name="targetSeason">
+		{% for s2 in season2 %}
+			<option id="{{ s2.seasonid }}" 
+					value="{{ s2.seasonid }}"
+			        {% if s2 == target %}selected="selected"{% endif %}>
+					{{ s2.seasonid }}
+			</option>
+		{% endfor %}
+		</select>
+		<input type="checkbox" name="include">Include players from target season
+		<input type="submit" value="Convert"/>
+	</form>
+</div>
+<div id="stattable">
+	{% render_table table %}
+</div>
+<footer>
+	<div>
+		<address><a href="mailto:bonhamdaniel@gmail.com">contact@benchwarmer.com</a></address>
+		<p>&copy2017 DCDesign</p>
+	</div>
+</footer>
