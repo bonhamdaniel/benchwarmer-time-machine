@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-
 class Season(models.Model):
     seasonid = models.IntegerField(primary_key=True)
     seasontype = models.CharField(max_length=4)
@@ -57,8 +56,8 @@ class Player(models.Model):
 class Goalieseasons(models.Model):
     id = models.IntegerField(primary_key=True)
     playerid = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='playerid')
-    seasonid = models.ForeignKey(Season, on_delete=models.CASCADE, db_column='seasonid')
-    playername = models.CharField(max_length=255, blank=True, null=True)
+    seasonid = models.IntegerField(blank=True, null=True)
+    #playername = models.CharField(max_length=255, blank=True, null=True)
     gp = models.IntegerField(blank=True, null=True)
     toi = models.FloatField(blank=True, null=True)
     sa = models.IntegerField(blank=True, null=True)
@@ -78,9 +77,9 @@ class Goalieseasons(models.Model):
 class Skaterseasons(models.Model):
     id = models.IntegerField(primary_key=True)
     playerid = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='playerid')
-    seasonid = models.ForeignKey(Season, on_delete=models.CASCADE, db_column='seasonid')
-    playername = models.CharField(max_length=255, blank=True, null=True)
-    position = models.CharField(max_length=5, blank=True, null=True)
+    seasonid = models.IntegerField(blank=True, null=True)
+    #playername = models.CharField(max_length=255, blank=True, null=True)
+    #position = models.CharField(max_length=5, blank=True, null=True)
     gp = models.IntegerField(blank=True, null=True)
     goals = models.IntegerField(blank=True, null=True)
     assists = models.IntegerField(blank=True, null=True)
@@ -95,7 +94,6 @@ class Skaterseasons(models.Model):
     class Meta:
         managed = False
         db_table = 'skaterseasons'
-
 
 class ApexAcl(models.Model):
     id = models.FloatField(primary_key=True)
@@ -119,7 +117,7 @@ class ApexWsFiles(models.Model):
     row = models.ForeignKey('ApexWsRows', models.DO_NOTHING, blank=True, null=True)
     webpage_id = models.FloatField(blank=True, null=True)
     component_level = models.CharField(max_length=30, blank=True, null=True)
-    name = models.CharField(max_length=255)
+    name1 = models.CharField(max_length=255)
     image_alias = models.CharField(max_length=255, blank=True, null=True)
     image_attributes = models.CharField(max_length=255, blank=True, null=True)
     content = models.BinaryField(blank=True, null=True)
@@ -438,7 +436,7 @@ class ApexWsWebpgSections(models.Model):
 
 class AuthGroup(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
-    name = models.CharField(unique=True, max_length=80, blank=True, null=True)
+    name1 = models.CharField(unique=True, max_length=80, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -458,7 +456,7 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name1 = models.CharField(max_length=255, blank=True, null=True)
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
     codename = models.CharField(max_length=100, blank=True, null=True)
 
@@ -508,6 +506,51 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
+class Block(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    blocker = models.IntegerField(blank=True, null=True)
+    shooter = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'block'
+
+
+class Convertedsseasons(models.Model):
+    playerid = models.IntegerField()
+    seasonid = models.CharField(max_length=20)
+    gp = models.IntegerField(blank=True, null=True)
+    g = models.IntegerField(blank=True, null=True)
+    a = models.IntegerField(blank=True, null=True)
+    p = models.IntegerField(blank=True, null=True)
+    pim = models.IntegerField(blank=True, null=True)
+    s = models.IntegerField(blank=True, null=True)
+    evg = models.IntegerField(blank=True, null=True)
+    eva = models.IntegerField(blank=True, null=True)
+    evp = models.IntegerField(blank=True, null=True)
+    ppg = models.IntegerField(blank=True, null=True)
+    ppa = models.IntegerField(blank=True, null=True)
+    ppp = models.IntegerField(blank=True, null=True)
+    shg = models.IntegerField(blank=True, null=True)
+    sha = models.IntegerField(blank=True, null=True)
+    shp = models.IntegerField(blank=True, null=True)
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    playername = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'convertedsseasons'
+
+
 class CopyOfOnice(models.Model):
     gameid = models.IntegerField(blank=True, null=True)
     period = models.IntegerField(blank=True, null=True)
@@ -530,6 +573,17 @@ class CopyOfOnice(models.Model):
     class Meta:
         managed = False
         db_table = 'copy_of_onice'
+
+
+class Decision(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    winner = models.IntegerField(blank=True, null=True)
+    loser = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'decision'
 
 
 class DemoCustomers(models.Model):
@@ -655,7 +709,7 @@ class DjangoContentType(models.Model):
 class DjangoMigrations(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
     app = models.CharField(max_length=255, blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name2 = models.CharField(max_length=255, blank=True, null=True)
     applied = models.DateTimeField()
 
     class Meta:
@@ -688,6 +742,172 @@ class Emp(models.Model):
         db_table = 'emp'
 
 
+class Faceoff(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    winner = models.IntegerField(blank=True, null=True)
+    loser = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'faceoff'
+
+
+class Game(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    seasonid = models.CharField(max_length=255, blank=True, null=True)
+    seasontype = models.CharField(max_length=255, blank=True, null=True)
+    gamedate = models.DateField(blank=True, null=True)
+    awayteam = models.IntegerField(blank=True, null=True)
+    hometeam = models.IntegerField(blank=True, null=True)
+    awayside = models.CharField(max_length=255, blank=True, null=True)
+    homeside = models.CharField(max_length=255, blank=True, null=True)
+    ot = models.CharField(max_length=255, blank=True, null=True)
+    so = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game'
+
+
+class Giveaway(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    culprit = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'giveaway'
+
+
+class Goal(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    scorer = models.IntegerField(blank=True, null=True)
+    primary = models.IntegerField(blank=True, null=True)
+    secondary = models.IntegerField(blank=True, null=True)
+    goalie = models.IntegerField(blank=True, null=True)
+    shot = models.CharField(max_length=255, blank=True, null=True)
+    situation = models.CharField(max_length=255, blank=True, null=True)
+    gwg = models.IntegerField(blank=True, null=True)
+    en = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+    v1 = models.IntegerField(blank=True, null=True)
+    v2 = models.IntegerField(blank=True, null=True)
+    v3 = models.IntegerField(blank=True, null=True)
+    v4 = models.IntegerField(blank=True, null=True)
+    v5 = models.IntegerField(blank=True, null=True)
+    v6 = models.IntegerField(blank=True, null=True)
+    h1 = models.IntegerField(blank=True, null=True)
+    h2 = models.IntegerField(blank=True, null=True)
+    h3 = models.IntegerField(blank=True, null=True)
+    h4 = models.IntegerField(blank=True, null=True)
+    h5 = models.IntegerField(blank=True, null=True)
+    h6 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'goal'
+
+
+class Goaliequal20102016(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.IntegerField(blank=True, null=True)
+    toi = models.FloatField(blank=True, null=True)
+    sa = models.IntegerField(blank=True, null=True)
+    tsq = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
+    sqps = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
+    xgala = models.FloatField(blank=True, null=True)
+    sgps = models.FloatField(blank=True, null=True)
+    ga = models.IntegerField(blank=True, null=True)
+    gs = models.FloatField(blank=True, null=True)
+    svpct = models.FloatField(blank=True, null=True)
+    xsvpct = models.FloatField(blank=True, null=True)
+    sv_plus = models.FloatField(blank=True, null=True)
+    gaa = models.FloatField(blank=True, null=True)
+    xgaa = models.FloatField(blank=True, null=True)
+    gaaplus = models.FloatField(blank=True, null=True)
+    gs_60 = models.FloatField(blank=True, null=True)
+    locstadjs = models.FloatField(blank=True, null=True)
+    locstadj_s = models.FloatField(blank=True, null=True)
+    locstadjxsv_field = models.FloatField(db_column='locstadjxsv_', blank=True, null=True)  # Field renamed because it ended with '_'.
+    locstadjsv_plus = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'goaliequal20102016'
+
+
+class Goaliesummary(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    playerid = models.IntegerField(blank=True, null=True)
+    jerseyno = models.IntegerField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    team = models.IntegerField(blank=True, null=True)
+    toi = models.FloatField(blank=True, null=True)
+    assists = models.IntegerField(blank=True, null=True)
+    goals = models.IntegerField(blank=True, null=True)
+    pim = models.IntegerField(blank=True, null=True)
+    shots = models.IntegerField(blank=True, null=True)
+    saves = models.IntegerField(blank=True, null=True)
+    ppsv = models.IntegerField(blank=True, null=True)
+    shsv = models.IntegerField(blank=True, null=True)
+    evsv = models.IntegerField(blank=True, null=True)
+    shsa = models.IntegerField(blank=True, null=True)
+    evsa = models.IntegerField(blank=True, null=True)
+    ppsa = models.IntegerField(blank=True, null=True)
+    decision = models.CharField(max_length=255, blank=True, null=True)
+    svpct = models.FloatField(blank=True, null=True)
+    evsvpct = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'goaliesummary'
+
+
+class Hit(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    hitter = models.IntegerField(blank=True, null=True)
+    hittee = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hit'
+
+
 class MdAdditionalProperties(models.Model):
     id = models.FloatField(primary_key=True)
     connection_id_fk = models.ForeignKey('MdConnections', models.DO_NOTHING, db_column='connection_id_fk')
@@ -710,7 +930,7 @@ class MdAdditionalProperties(models.Model):
 class MdApplicationfiles(models.Model):
     id = models.FloatField(primary_key=True)
     applications_id_fk = models.ForeignKey('MdApplications', models.DO_NOTHING, db_column='applications_id_fk')
-    name = models.CharField(max_length=200)
+    name3 = models.CharField(max_length=200)
     uri = models.CharField(max_length=4000)
     type = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
@@ -729,7 +949,7 @@ class MdApplicationfiles(models.Model):
 
 class MdApplications(models.Model):
     id = models.FloatField(primary_key=True)
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    name4 = models.CharField(max_length=4000, blank=True, null=True)
     description = models.CharField(max_length=4000, blank=True, null=True)
     base_dir = models.CharField(max_length=4000, blank=True, null=True)
     output_dir = models.CharField(max_length=4000, blank=True, null=True)
@@ -800,7 +1020,7 @@ class MdConnections(models.Model):
     username = models.CharField(max_length=4000, blank=True, null=True)
     password = models.CharField(max_length=4000, blank=True, null=True)
     dburl = models.CharField(max_length=4000, blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name5 = models.CharField(max_length=255, blank=True, null=True)
     native_sql = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=30, blank=True, null=True)
     num_catalogs = models.FloatField(blank=True, null=True)
@@ -856,7 +1076,7 @@ class MdConstraintDetails(models.Model):
 class MdConstraints(models.Model):
     id = models.FloatField(primary_key=True)
     delete_clause = models.CharField(max_length=4000, blank=True, null=True)
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    name6 = models.CharField(max_length=4000, blank=True, null=True)
     constraint_type = models.CharField(max_length=4000, blank=True, null=True)
     table_id_fk = models.ForeignKey('MdTables', models.DO_NOTHING, db_column='table_id_fk')
     reftable_id_fk = models.FloatField(blank=True, null=True)
@@ -928,7 +1148,7 @@ class MdGroupMembers(models.Model):
     id = models.FloatField(primary_key=True)
     group_id_fk = models.ForeignKey('MdGroups', models.DO_NOTHING, db_column='group_id_fk')
     user_id_fk = models.ForeignKey('MdUsers', models.DO_NOTHING, db_column='user_id_fk', blank=True, null=True)
-    group_member_id_fk = models.FloatField()
+    group_member_id = models.FloatField()
     security_group_id = models.FloatField()
     created_on = models.DateField()
     created_by = models.CharField(max_length=255, blank=True, null=True)
@@ -1073,8 +1293,8 @@ class MdMigrWeakdep(models.Model):
 
 
 class MdNumrowSource(models.Model):
-    numrows = models.IntegerField(blank=True, null=True)
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    numrows = models.IntegerField(primary_key=True)
+    name8 = models.CharField(max_length=4000, blank=True, null=True)
     objid = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -1083,8 +1303,8 @@ class MdNumrowSource(models.Model):
 
 
 class MdNumrowTarget(models.Model):
-    numrows = models.IntegerField(blank=True, null=True)
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    numrows = models.IntegerField(primary_key=True, )
+    name9 = models.CharField(max_length=4000, blank=True, null=True)
     objid = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -1095,7 +1315,7 @@ class MdNumrowTarget(models.Model):
 class MdOtherObjects(models.Model):
     id = models.FloatField(primary_key=True)
     schema_id_fk = models.ForeignKey('MdSchemas', models.DO_NOTHING, db_column='schema_id_fk')
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    name10 = models.CharField(max_length=4000, blank=True, null=True)
     native_sql = models.TextField(blank=True, null=True)
     native_key = models.CharField(max_length=4000, blank=True, null=True)
     comments = models.CharField(max_length=4000, blank=True, null=True)
@@ -1113,7 +1333,7 @@ class MdOtherObjects(models.Model):
 class MdPackages(models.Model):
     id = models.FloatField(primary_key=True)
     schema_id_fk = models.ForeignKey('MdSchemas', models.DO_NOTHING, db_column='schema_id_fk')
-    name = models.CharField(max_length=4000)
+    name11 = models.CharField(max_length=4000)
     package_header = models.TextField(blank=True, null=True)
     native_sql = models.TextField(blank=True, null=True)
     native_key = models.CharField(max_length=4000, blank=True, null=True)
@@ -1206,7 +1426,7 @@ class MdRepoversions(models.Model):
 class MdSchemas(models.Model):
     id = models.FloatField(primary_key=True)
     catalog_id_fk = models.ForeignKey(MdCatalogs, models.DO_NOTHING, db_column='catalog_id_fk')
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    name13 = models.CharField(max_length=4000, blank=True, null=True)
     type = models.CharField(max_length=1, blank=True, null=True)
     character_set = models.CharField(max_length=4000, blank=True, null=True)
     version_tag = models.CharField(max_length=40, blank=True, null=True)
@@ -1227,7 +1447,7 @@ class MdSchemas(models.Model):
 class MdSequences(models.Model):
     id = models.FloatField(primary_key=True)
     schema_id_fk = models.ForeignKey(MdSchemas, models.DO_NOTHING, db_column='schema_id_fk')
-    name = models.CharField(max_length=4000)
+    name14 = models.CharField(max_length=4000)
     seq_start = models.FloatField()
     incr = models.FloatField()
     native_sql = models.TextField(blank=True, null=True)
@@ -1248,7 +1468,7 @@ class MdStoredPrograms(models.Model):
     id = models.FloatField(primary_key=True)
     schema_id_fk = models.ForeignKey(MdSchemas, models.DO_NOTHING, db_column='schema_id_fk')
     programtype = models.CharField(max_length=20, blank=True, null=True)
-    name = models.CharField(max_length=4000, blank=True, null=True)
+    name15 = models.CharField(max_length=4000, blank=True, null=True)
     package_id_fk = models.ForeignKey(MdPackages, models.DO_NOTHING, db_column='package_id_fk', blank=True, null=True)
     native_sql = models.TextField(blank=True, null=True)
     native_key = models.CharField(max_length=4000, blank=True, null=True)
@@ -1269,7 +1489,7 @@ class MdStoredPrograms(models.Model):
 class MdSynonyms(models.Model):
     id = models.FloatField(primary_key=True)
     schema_id_fk = models.ForeignKey(MdSchemas, models.DO_NOTHING, db_column='schema_id_fk')
-    name = models.CharField(max_length=4000)
+    name16 = models.CharField(max_length=4000)
     synonym_for_id = models.FloatField()
     for_object_type = models.CharField(max_length=4000)
     private_visibility = models.CharField(max_length=1, blank=True, null=True)
@@ -1492,6 +1712,771 @@ class Migrlog(models.Model):
         db_table = 'migrlog'
 
 
+class Missedshot(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    culprit = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'missedshot'
+
+
+class Officials(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    referee1id = models.IntegerField(blank=True, null=True)
+    referee1name = models.CharField(max_length=255, blank=True, null=True)
+    referee2id = models.IntegerField(blank=True, null=True)
+    referee2name = models.CharField(max_length=255, blank=True, null=True)
+    linesman1id = models.IntegerField(blank=True, null=True)
+    linesman1name = models.CharField(max_length=255, blank=True, null=True)
+    linesman2id = models.IntegerField(blank=True, null=True)
+    linesman2name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'officials'
+
+
+class Onice(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    event = models.CharField(max_length=255, blank=True, null=True)
+    situation = models.CharField(max_length=255, blank=True, null=True)
+    v1 = models.IntegerField(blank=True, null=True)
+    v2 = models.IntegerField(blank=True, null=True)
+    v3 = models.IntegerField(blank=True, null=True)
+    v4 = models.IntegerField(blank=True, null=True)
+    v5 = models.IntegerField(blank=True, null=True)
+    v6 = models.IntegerField(blank=True, null=True)
+    h1 = models.IntegerField(blank=True, null=True)
+    h2 = models.IntegerField(blank=True, null=True)
+    h3 = models.IntegerField(blank=True, null=True)
+    h4 = models.IntegerField(blank=True, null=True)
+    h5 = models.IntegerField(blank=True, null=True)
+    h6 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'onice'
+
+
+class PasteErrors(models.Model):
+    adjx = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'paste_errors'
+
+
+class Penalty(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    taker = models.IntegerField(blank=True, null=True)
+    drawer = models.IntegerField(blank=True, null=True)
+    penalty = models.CharField(max_length=255, blank=True, null=True)
+    minutes = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'penalty'
+
+
+class Playershotquality(models.Model):
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.IntegerField(blank=True, null=True)
+    shots = models.IntegerField(blank=True, null=True)
+    evpptoi = models.IntegerField(blank=True, null=True)
+    tsq = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
+    sqps = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
+    tsg = models.FloatField(blank=True, null=True)
+    sgps = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'playershotquality'
+
+
+class Playersummary(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    playerid = models.IntegerField(blank=True, null=True)
+    jerseyno = models.IntegerField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    team = models.IntegerField(blank=True, null=True)
+    position = models.CharField(max_length=255, blank=True, null=True)
+    toi = models.FloatField(blank=True, null=True)
+    assists = models.IntegerField(blank=True, null=True)
+    goals = models.IntegerField(blank=True, null=True)
+    shots = models.IntegerField(blank=True, null=True)
+    hits = models.IntegerField(blank=True, null=True)
+    ppg = models.IntegerField(blank=True, null=True)
+    ppa = models.IntegerField(blank=True, null=True)
+    pim = models.IntegerField(blank=True, null=True)
+    fow = models.IntegerField(blank=True, null=True)
+    fot = models.IntegerField(blank=True, null=True)
+    ta = models.IntegerField(blank=True, null=True)
+    ga = models.IntegerField(blank=True, null=True)
+    shg = models.IntegerField(blank=True, null=True)
+    sha = models.IntegerField(blank=True, null=True)
+    blocks = models.IntegerField(blank=True, null=True)
+    plusminus = models.IntegerField(blank=True, null=True)
+    evtoi = models.FloatField(blank=True, null=True)
+    pptoi = models.FloatField(blank=True, null=True)
+    shtoi = models.FloatField(blank=True, null=True)
+    tid = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'playersummary'
+
+
+class Seasongoaliequal20102016(models.Model):
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    seasonid = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.IntegerField(blank=True, null=True)
+    toi = models.FloatField(blank=True, null=True)
+    sa = models.IntegerField(blank=True, null=True)
+    tsq = models.FloatField(blank=True, null=True)
+    sqps = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
+    xgala = models.FloatField(blank=True, null=True)
+    sgps = models.FloatField(blank=True, null=True)
+    ga = models.IntegerField(blank=True, null=True)
+    gs = models.FloatField(blank=True, null=True)
+    svpct = models.FloatField(blank=True, null=True)
+    xsvpct = models.FloatField(blank=True, null=True)
+    sv_plus = models.FloatField(blank=True, null=True)
+    gaa = models.FloatField(blank=True, null=True)
+    xgaa = models.FloatField(blank=True, null=True)
+    gaaplus = models.FloatField(blank=True, null=True)
+    gs_60 = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'seasongoaliequal20102016'
+
+
+class Shootout(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    shooter = models.IntegerField(blank=True, null=True)
+    goalie = models.IntegerField(blank=True, null=True)
+    result = models.CharField(max_length=255, blank=True, null=True)
+    shot = models.CharField(max_length=255, blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'shootout'
+
+
+class Shot(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    shooter = models.IntegerField(blank=True, null=True)
+    goalie = models.IntegerField(blank=True, null=True)
+    shot = models.CharField(max_length=255, blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'shot'
+
+
+class Skater1987(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1987'
+
+
+class Skater1988(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1988'
+
+
+class Skater1989(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1989'
+
+
+class Skater1990(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1990'
+
+
+class Skater1991(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1991'
+
+
+class Skater1992(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1992'
+
+
+class Skater1993(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1993'
+
+
+class Skater1994(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1994'
+
+
+class Skater1995(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1995'
+
+
+class Skater1996(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1996'
+
+
+class Skater1997(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1997'
+
+
+class Skater1998(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1998'
+
+
+class Skater1999(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater1999'
+
+
+class Skater2000(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2000'
+
+
+class Skater2001(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2001'
+
+
+class Skater2002(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2002'
+
+
+class Skater2003(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2003'
+
+
+class Skater2004(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2004'
+
+
+class Skater2005(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2005'
+
+
+class Skater2006(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2006'
+
+
+class Skater2007(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2007'
+
+
+class Skater2008(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2008'
+
+
+class Skater2009(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2009'
+
+
+class Skater2010(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2010'
+
+
+class Skater2011(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2011'
+
+
+class Skater2012(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2012'
+
+
+class Skater2013(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2013'
+
+
+class Skater2014(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2014'
+
+
+class Skater2015(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2015'
+
+
+class Skater2016(models.Model):
+    playerid = models.IntegerField(blank=True, null=True)
+    playername = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    goals = models.FloatField(blank=True, null=True)
+    assists = models.FloatField(blank=True, null=True)
+    plusminus = models.FloatField(blank=True, null=True)
+    pim = models.FloatField(blank=True, null=True)
+    shots = models.FloatField(blank=True, null=True)
+    ppg = models.FloatField(blank=True, null=True)
+    ppa = models.FloatField(blank=True, null=True)
+    shg = models.FloatField(blank=True, null=True)
+    sha = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'skater2016'
+
+
 class StageMigrlog(models.Model):
     svrid_fk = models.FloatField(blank=True, null=True)
     dbid_gen_fk = models.FloatField(blank=True, null=True)
@@ -1506,3 +2491,89 @@ class StageMigrlog(models.Model):
     class Meta:
         managed = False
         db_table = 'stage_migrlog'
+
+
+class Stars(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    firststar = models.IntegerField(blank=True, null=True)
+    secondstar = models.IntegerField(blank=True, null=True)
+    thirdstar = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'stars'
+
+
+class Takeaway(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    teamid = models.IntegerField(blank=True, null=True)
+    taker = models.IntegerField(blank=True, null=True)
+    period = models.IntegerField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    xcoord = models.FloatField(blank=True, null=True)
+    ycoord = models.FloatField(blank=True, null=True)
+    adjx = models.IntegerField(blank=True, null=True)
+    adjy = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'takeaway'
+
+
+class Team(models.Model):
+    teamid = models.IntegerField(blank=True, null=True)
+    teamname = models.CharField(max_length=255, blank=True, null=True)
+    abbreviation = models.CharField(max_length=255, blank=True, null=True)
+    nickname = models.CharField(max_length=255, blank=True, null=True)
+    franchiseid = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'team'
+
+
+class Teamseasons(models.Model):
+    teamid = models.IntegerField(blank=True, null=True)
+    seasonid = models.CharField(max_length=255, blank=True, null=True)
+    teamname = models.CharField(max_length=255, blank=True, null=True)
+    gp = models.FloatField(blank=True, null=True)
+    w = models.IntegerField(blank=True, null=True)
+    l = models.IntegerField(blank=True, null=True)
+    t = models.IntegerField(blank=True, null=True)
+    otl = models.IntegerField(blank=True, null=True)
+    sow = models.IntegerField(blank=True, null=True)
+    sol = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'teamseasons'
+
+
+class Teamsummary(models.Model):
+    gameid = models.IntegerField(blank=True, null=True)
+    awayteam = models.IntegerField(blank=True, null=True)
+    hometeam = models.IntegerField(blank=True, null=True)
+    awaygoals = models.IntegerField(blank=True, null=True)
+    homegoals = models.IntegerField(blank=True, null=True)
+    awaypim = models.IntegerField(blank=True, null=True)
+    homepim = models.IntegerField(blank=True, null=True)
+    awayshots = models.IntegerField(blank=True, null=True)
+    homeshots = models.IntegerField(blank=True, null=True)
+    awayppg = models.IntegerField(blank=True, null=True)
+    homeppg = models.IntegerField(blank=True, null=True)
+    awayppopp = models.IntegerField(blank=True, null=True)
+    homeppopp = models.IntegerField(blank=True, null=True)
+    awayblocks = models.IntegerField(blank=True, null=True)
+    homeblocks = models.IntegerField(blank=True, null=True)
+    awayta = models.IntegerField(blank=True, null=True)
+    hometa = models.IntegerField(blank=True, null=True)
+    awayga = models.IntegerField(blank=True, null=True)
+    homega = models.IntegerField(blank=True, null=True)
+    awayhits = models.IntegerField(blank=True, null=True)
+    homehits = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'teamsummary'

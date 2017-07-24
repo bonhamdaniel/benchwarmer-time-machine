@@ -22,6 +22,9 @@ class ConvertedPTable(tables.Table):
 	p = CenterColumn(attrs = {'td': {'class': 'center'}})
 	pim = CenterColumn(attrs = {'td': {'class': 'center'}}, verbose_name='PIM')
 	s = CenterColumn(attrs = {'td': {'class': 'center'}})
+	gpg = tables.Column(attrs = {'td': {'class': 'center'}}, verbose_name='G/GP')
+	apg = tables.Column(attrs = {'td': {'class': 'center'}}, verbose_name='A/GP')
+	pperg = tables.Column(attrs = {'td': {'class': 'center'}}, verbose_name='P/GP')
 	evg = CenterColumn(attrs = {'td': {'class': 'center'}}, verbose_name='EVG')
 	eva = CenterColumn(attrs = {'td': {'class': 'center'}}, verbose_name='EVA')
 	evp = CenterColumn(attrs = {'td': {'class': 'center'}}, verbose_name='EVP')
@@ -62,51 +65,6 @@ class ConvertedGTable(tables.Table):
 	def render_rank(self):
 		return '%d' % next(self.counter)
 
-def convertTData(baseData, base, target):
-	data = []
-	evAdj = target.evg_gp / base.evg_gp
-	ppAdj = target.ppg_gp / base.ppg_gp
-	shAdj = target.shg_gp / base.shg_gp
-	sAdj = target.s_gp / base.s_gp
-	pimAdj = target.pim_gp / base.pim_gp
-	for p in baseData:
-		evg = int((p.goals - p.ppg - p.shg) * evAdj)
-		eva = int((p.assists - p.ppa - p.sha) * evAdj * aAdj)
-		ppg = int(p.ppg * ppAdj)
-		ppa = int(p.ppa * ppAdj * aAdj)
-		shg = int(p.shg * shAdj)
-		sha = int(p.sha * shAdj * aAdj)
-		pim = int(p.pim * pimAdj)
-		s = int(p.shots * sAdj)
-		data.append({'player': p.playername, 'gp': p.gp, 'g': (evg+ppg+shg), 'a': (eva+ppa+sha), 'p': (evg+ppg+shg+eva+ppa+sha), 'pim': pim, 's': s, 'evg': evg, 'eva': eva, 'evp': (evg+eva), 'ppg': ppg, 'ppa': ppa, 'ppp': (ppg+ppa), 'shg': shg, 'sha': sha, 'shp': (shg+sha)})
-	return data
-
-#def convertPData(baseData, base, target, convertedSeason):
-#	data = []
-#	evAdj = target.evg_gp / base.evg_gp
-#	ppAdj = target.ppg_gp / base.ppg_gp
-#	shAdj = target.shg_gp / base.shg_gp
-#	sAdj = target.s_gp / base.s_gp
-#	pimAdj = target.pim_gp / base.pim_gp
-#	aAdj = target.a_gp / base.a_gp
-#	for p in baseData:
-#		evg = int((p.goals - p.ppg - p.shg) * evAdj)
-#		eva = int((p.assists - p.ppa - p.sha) * evAdj * aAdj)
-#		ppg = int(p.ppg * ppAdj)
-#		ppa = int(p.ppa * ppAdj * aAdj)
-#		shg = int(p.shg * shAdj)
-#		sha = int(p.sha * shAdj * aAdj)
-#		pim = int(p.pim * pimAdj)
-#		s = int(p.shots * sAdj)
-#		g=evg+ppg+shg
-#		a=eva+ppa+sha
-#		pts=evg+ppg+shg+eva+ppa+sha
-#		evp=evg+eva
-#		ppp=ppg+ppa
-#		shp=shg+sha
-#		cs = Convertedsseasons(playerid=p.playerid, playername=p.playername, seasonid=convertedSeason, gp=p.gp, g=g, a=a, p=pts, pim=pim, s=s, evg=evg, eva=eva, evp=evp, ppg=ppg, ppa=ppa, ppp=ppp, shg=shg, sha=sha, shp=shp)
-#		cs.save()
-
 def convertPData(baseData, base, target):
 	data = []
 	evAdj = target.evg_gp / base.evg_gp
@@ -130,7 +88,10 @@ def convertPData(baseData, base, target):
 		evp=evg+eva
 		ppp=ppg+ppa
 		shp=shg+sha
-		data.append({"player": p.playername, "season": base.seasonid, "position": p.position, "gp": p.gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
+		gpg = g / p.gp
+		apg = a / p.gp
+		pperg = pts / p.gp
+		data.append({"player": p.playerid.playername, "season": base.seasonid, "position": p.playerid.position, "gp": p.gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "gpg": '{0:.2f}'.format(gpg), "apg": '{0:.2f}'.format(apg), "pperg": '{0:.2f}'.format(pperg), "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
 	return data
 
 def convertGData(baseData, base, target):
@@ -149,7 +110,7 @@ def convertGData(baseData, base, target):
 			gaa = (sa-sv) / p.toi * 60
 			svpct = sv / sa
 			sa_60 = sa / p.toi * 60
-			data.append({'player': p.playername, "season": base.seasonid, 'gp': p.gp, 'toi': '{0:.2f}'.format(p.toi), 'w': w, 'l': l, 'sa': sa, 'sv': int(sv), 'sa_60': '{0:.2f}'.format(sa_60), 'gaa': '{0:.2f}'.format(gaa), 'svpct': '{0:.3f}'.format(svpct)})
+			data.append({'player': p.playerid.playername, "season": base.seasonid, 'gp': p.gp, 'toi': '{0:.2f}'.format(p.toi), 'w': w, 'l': l, 'sa': sa, 'sv': int(sv), 'sa_60': '{0:.2f}'.format(sa_60), 'gaa': '{0:.2f}'.format(gaa), 'svpct': '{0:.3f}'.format(svpct)})
 	return data
 
 def convertCData(target, player1Data, player2Data):
@@ -177,7 +138,10 @@ def convertCData(target, player1Data, player2Data):
 		evp=evg+eva
 		ppp=ppg+ppa
 		shp=shg+sha
-		data.append({"player": p.playername, "season": base.seasonid, "position": p.position, "gp": p.gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
+		gpg = g / p.gp
+		apg = a / p.gp
+		pperg = pts / p.gp
+		data.append({"player": p.playerid.playername, "season": base.seasonid, "position": p.playerid.position, "gp": p.gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "gpg": '{0:.2f}'.format(gpg), "apg": '{0:.2f}'.format(apg), "pperg": '{0:.2f}'.format(pperg), "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
 	return data
 
 def convertCarData(target, player1Data, player2Data):
@@ -197,7 +161,13 @@ def convertCarData(target, player1Data, player2Data):
 	a = 0
 	pts = 0
 	gp = 0
+	minY = int(player1Data[0].seasonid)
+	maxY = int(player1Data[0].seasonid)
 	for p in player1Data:
+		if int(p.seasonid) < minY:
+			miny = int(p.seasonid) 
+		if int(p.seasonid) > maxY:
+			maxy = int(p.seasonid) 
 		base = Season.objects.get(pk=str(p.seasonid)[:8])
 		evAdj = target.evg_gp / base.evg_gp
 		ppAdj = target.ppg_gp / base.ppg_gp
@@ -220,7 +190,11 @@ def convertCarData(target, player1Data, player2Data):
 	evp+=evg+eva
 	ppp+=ppg+ppa
 	shp+=shg+sha
-	data.append({"player": p.playername, "season": base.seasonid, "position": p.position, "gp": gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
+	gpg = g / gp
+	apg = a / gp
+	pperg = pts / gp
+	season = str(miny)[:4] + str(maxY)[4:8]
+	data.append({"player": p.playerid.playername, "season": season, "position": p.playerid.position, "gp": gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "gpg": '{0:.2f}'.format(gpg), "apg": '{0:.2f}'.format(apg), "pperg": '{0:.2f}'.format(pperg), "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
 	evg = 0
 	eva = 0
 	evp = 0
@@ -236,8 +210,14 @@ def convertCarData(target, player1Data, player2Data):
 	a = 0
 	pts = 0
 	gp = 0
+	minY = int(player2Data[0].seasonid)
+	maxY = int(player2Data[0].seasonid)
 	for p in player2Data:
-		base = Season.objects.get(pk=str(p.seasonid)[:8])
+		if int(p.seasonid) < minY:
+			miny = int(p.seasonid) 
+		if int(p.seasonid) > maxY:
+			maxy = int(p.seasonid) 
+		base = Season.objects.get(pk=p.seasonid)
 		evAdj = target.evg_gp / base.evg_gp
 		ppAdj = target.ppg_gp / base.ppg_gp
 		shAdj = target.shg_gp / base.shg_gp
@@ -259,5 +239,9 @@ def convertCarData(target, player1Data, player2Data):
 	evp+=evg+eva
 	ppp+=ppg+ppa
 	shp+=shg+sha
-	data.append({"player": p.playername, "season": base.seasonid, "position": p.position, "gp": gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
+	gpg = g / gp
+	apg = a / gp
+	pperg = pts / gp
+	season = str(miny)[:4] + str(maxY)[4:8]
+	data.append({"player": p.playerid.playername, "season": season, "position": p.playerid.position, "gp": gp, "g": g, "a": a, "p": pts, "pim": pim, "s": s, "gpg": '{0:.2f}'.format(gpg), "apg": '{0:.2f}'.format(apg), "pperg": '{0:.2f}'.format(pperg),  "evg": evg, "eva": eva, "evp": evp, "ppg": ppg, "ppa": ppa, "ppp": ppp, "shg": shg, "sha": sha, "shp": shp})
 	return data
